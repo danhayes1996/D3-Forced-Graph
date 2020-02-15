@@ -2,11 +2,19 @@
     "nodes": [
         {
             "id": 1,
-            "title": "A" 
+            "properties": {
+                "title": "A",
+                "other": "apple"
+            },
+            "type": "one"
         },
         {
             "id": 2,
-            "title": "B" 
+            "properties": {
+                "title": "B",
+                "something": "hello"
+            },
+            "type": "two"
         }
     ],
     "links": [

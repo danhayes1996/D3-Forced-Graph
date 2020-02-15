@@ -1,16 +1,22 @@
 const width = 400;
 const height = 400;
+const nodeRadius = 10;
 let scale = 1;
 
 function color() {
   const scale = d3.scaleOrdinal(d3.schemeCategory10);
-  return d => scale(d.title);
+  return d => scale(d.type);
 }
 
 function loadData() {
   d3.json("data.json")
     .then(data => createGraph(data))
     .catch(error => console.log(error));
+}
+
+function getTitle(d) {
+  const proto = Object.getPrototypeOf(d);
+  return proto.properties.title;
 }
 
 function createGraph(data) {
@@ -38,16 +44,22 @@ function createGraph(data) {
   const node = svg.append("g")
     .attr("stroke", "#fff")
     .attr("stroke-width", 1.5)
-    .selectAll("circle")
+    .attr("class", "node")
+    .selectAll("g")
     .data(nodes)
-    .join("circle")
-      .attr("class", "node")
-      .attr("r", 5)
+    .join("g");
+
+  node.append("circle")
+      .attr("r", nodeRadius)
       .attr("fill", color())
       .call(drag(simulation));
 
+  node.append("text")
+    .style("stroke", "black")
+    .text(d => getTitle(d));
+
   node.append("title")
-      .text(d => d.id);
+    .text(d => d.id);
 
   simulation.on("tick", () => {
     link
@@ -56,9 +68,13 @@ function createGraph(data) {
       .attr("x2", d => d.target.x)
       .attr("y2", d => d.target.y);
 
-    node
+    node.selectAll("circle")
       .attr("cx", d => d.x)
       .attr("cy", d => d.y);
+
+    node.selectAll("text")
+      .attr("x", d => d.x)
+      .attr("y", d => d.y);
   });
 
   d3.select("#btn").on("click", d => moveCenter(nodes));
@@ -80,7 +96,7 @@ function moveCenter(nodes) {
 
   const graphW = minX - maxX;
   const graphH = minY - maxY;
-  scale = 2.5;
+  scale = 2;
 
   const transX = (bounds.width / 2) - (graphW / 2) - maxX;
   const transY = (bounds.height / 2) - (graphH / 2) - maxY; 
@@ -97,8 +113,8 @@ function drag(simulation) {
   }
   
   function dragged(d) {
-    d.fx += d3.event.dx / scale;
-    d.fy += d3.event.dy / scale;
+    d.fx += d3.event.dx;
+    d.fy += d3.event.dy;
   }
   
   function dragended(d) {
