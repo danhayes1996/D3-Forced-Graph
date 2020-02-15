@@ -13,49 +13,22 @@ function loadData() {
     .catch(error => console.log(error));
 }
 
-function moveCenter(nodes) {
-
-  let maxX = 0;
-  let minX = Number.MAX_SAFE_INTEGER;
-  let maxY = 0;
-  let minY = Number.MAX_SAFE_INTEGER;
-  for(let node of nodes) {
-      if(node.x > maxX) maxX = node.x;
-      if(node.x < minX) minX = node.x;
-      if(node.y > maxY) maxY = node.y;
-      if(node.y < minY) minY = node.y;
-  }
-
-  const bounds = d3.select("#svg-container").node().getBoundingClientRect();
-
-  const graphW = minX - maxX;
-  const graphH = minY - maxY;
-
-  const transX = (bounds.width / 2) - (graphW / 2) - maxX;
-  const transY = (bounds.height / 2) - (graphH / 2) - maxY; 
-
-  scale = 2;
-
-  d3.selectAll(".node, .link").transition().duration(2000).attr("transform", "translate(" + transX + ", " + transY + ")scale("+ scale + ")");
-}
-
 function createGraph(data) {
   const links = data.links.map(d => Object.create(d));
   const nodes = data.nodes.map(d => Object.create(d));
 
   const simulation = d3.forceSimulation(nodes)
-      .force("charge", d3.forceManyBody().strength(-3000))
-      .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("x", d3.forceX(width / 2).strength(1))
-      .force("y", d3.forceY(height / 2).strength(1))
-      .force("link", d3.forceLink(links).id(d => d.id).distance(50).strength(1))
+    .force("charge", d3.forceManyBody().strength(-3000))
+    .force("center", d3.forceCenter(width / 2, height / 2))
+    .force("x", d3.forceX(width / 2).strength(1))
+    .force("y", d3.forceY(height / 2).strength(1))
+    .force("link", d3.forceLink(links).id(d => d.id).distance(50).strength(1))
 
-  const svg = d3.select("svg")
-      // .attr("viewBox", [0, 0, width, height]);
+  const svg = d3.select("svg");
 
   const link = svg.append("g")
-      .attr("stroke", "#999")
-      .attr("stroke-opacity", 0.6)
+    .attr("stroke", "#999")
+    .attr("stroke-opacity", 0.6)
     .selectAll("line")
     .data(links)
     .join("line")
@@ -63,8 +36,8 @@ function createGraph(data) {
       .attr("stroke-width", d => Math.sqrt(d.value));
 
   const node = svg.append("g")
-      .attr("stroke", "#fff")
-      .attr("stroke-width", 1.5)
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 1.5)
     .selectAll("circle")
     .data(nodes)
     .join("circle")
@@ -78,17 +51,41 @@ function createGraph(data) {
 
   simulation.on("tick", () => {
     link
-        .attr("x1", d => d.source.x)
-        .attr("y1", d => d.source.y)
-        .attr("x2", d => d.target.x)
-        .attr("y2", d => d.target.y);
+      .attr("x1", d => d.source.x)
+      .attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x)
+      .attr("y2", d => d.target.y);
 
     node
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y);
+      .attr("cx", d => d.x)
+      .attr("cy", d => d.y);
   });
 
   d3.select("#btn").on("click", d => moveCenter(nodes));
+}
+
+function moveCenter(nodes) {
+  let maxX = 0;
+  let minX = Number.MAX_SAFE_INTEGER;
+  let maxY = 0;
+  let minY = Number.MAX_SAFE_INTEGER;
+  for(let node of nodes) {
+    if(node.x > maxX) maxX = node.x;
+    if(node.x < minX) minX = node.x;
+    if(node.y > maxY) maxY = node.y;
+    if(node.y < minY) minY = node.y;
+  }
+
+  const bounds = d3.select("#svg-container").node().getBoundingClientRect();
+
+  const graphW = minX - maxX;
+  const graphH = minY - maxY;
+  scale = 2.5;
+
+  const transX = (bounds.width / 2) - (graphW / 2) - maxX;
+  const transY = (bounds.height / 2) - (graphH / 2) - maxY; 
+
+  d3.selectAll(".node, .link").transition().duration(2000).attr("transform", /*"translate(" + transX + ", " + transY + ")*/"scale("+ scale + ")");
 }
 
 function drag(simulation) {
@@ -100,8 +97,8 @@ function drag(simulation) {
   }
   
   function dragged(d) {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
+    d.fx += d3.event.dx / scale;
+    d.fy += d3.event.dy / scale;
   }
   
   function dragended(d) {
@@ -111,9 +108,9 @@ function drag(simulation) {
   }
   
   return d3.drag()
-      .on("start", dragstarted)
-      .on("drag", dragged)
-      .on("end", dragended);
+    .on("start", dragstarted)
+    .on("drag", dragged)
+    .on("end", dragended);
 }
 
 loadData();
