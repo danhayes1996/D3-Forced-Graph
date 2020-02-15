@@ -47,7 +47,8 @@ function createGraph(data) {
     .attr("class", "node")
     .selectAll("g")
     .data(nodes)
-    .join("g");
+    .join("g")
+    .on("click", d => populateLegend(d));
 
   node.append("circle")
       .attr("r", nodeRadius)
@@ -96,7 +97,7 @@ function moveCenter(nodes) {
 
   const graphW = minX - maxX;
   const graphH = minY - maxY;
-  scale = 2;
+  scale = 2.3;
 
   const transX = (bounds.width / 2) - (graphW / 2) - maxX;
   const transY = (bounds.height / 2) - (graphH / 2) - maxY; 
@@ -127,6 +128,33 @@ function drag(simulation) {
     .on("start", dragstarted)
     .on("drag", dragged)
     .on("end", dragended);
+}
+
+function populateLegend(d) {
+  const proto = Object.getPrototypeOf(d);
+  clearLegend();
+
+  for(let prop in proto.properties) {
+    const propDiv = d3.select("#legend").append("div")
+      .selectAll("div")
+      .data([{prop: prop}])
+      .join("div")
+    
+    propDiv.append("text").text(prop);
+
+    propDiv.append("input", prop)
+      .attr("type", "radio")
+      .attr("name", "property")
+      .on("click", e =>
+        d3.selectAll(".node text")
+          .filter(d => d.type === proto.type)
+          .text(d => d.properties[e.prop]));
+  }
+
+}
+
+function clearLegend() {
+  d3.select("#legend").selectAll("*").remove();
 }
 
 loadData();
