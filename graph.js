@@ -1,6 +1,6 @@
 let width = 0;
 let height = 0;
-const nodeRadius = 20;
+const nodeRadius = 10;
 let scale = 1;
 
 function color() {
@@ -140,8 +140,8 @@ function drag(simulation) {
   }
   
   function dragged(d) {
-    d.fx += d3.event.dx;
-    d.fy += d3.event.dy;
+    d.fx += d3.event.dx / scale;
+    d.fy += d3.event.dy / scale;
   }
   
   function dragended(d) {
@@ -168,18 +168,21 @@ function populateLegend(d) {
     const propDiv = d3.select("#legend")
       .append("div")
       .data([{prop: prop}])
-      .join("div")
-    
-    propDiv.append("text").text(prop);
+      .join("div");
 
     propDiv.append("input", prop)
+      .attr("id", "rb" + prop)
       .attr("type", "radio")
       .attr("name", "property")
       .on("click", e =>
         d3.selectAll(".node text")
           .filter(d => d.type === proto.type)
           .text(d => d.properties[e.prop]));
-  }
+
+    propDiv.append("label")
+      .attr("for", "rb" + prop)
+      .text(prop);
+    }
 }
 
 //stops a dodgey animation when left: -20% is set in css directly.

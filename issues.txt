@@ -1,0 +1,8 @@
+ - On random occasions i have to switch the dragged function to one of the following:
+    d.fx += d3.event.dx / scale;
+    d.fy += d3.event.dy / scale;
+
+    OR
+
+    d.fx += d3.event.dx;
+    d.fy += d3.event.dy;
