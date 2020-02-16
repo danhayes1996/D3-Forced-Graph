@@ -1,6 +1,6 @@
 let width = 0;
 let height = 0;
-const nodeRadius = 10;
+const nodeRadius = 20;
 let scale = 1;
 
 function color() {
@@ -62,15 +62,17 @@ function createGraph(data) {
     .selectAll("g")
     .data(nodes)
     .join("g")
-    .on("click", d => {populateLegend(d); d3.event.stopPropagation(); });
+    .on("click", d => { populateLegend(d); d3.event.stopPropagation(); })
+    .call(drag(simulation));
 
   node.append("circle")
       .attr("r", nodeRadius)
-      .attr("fill", color())
-      .call(drag(simulation));
+      .attr("fill", color());
 
   node.append("text")
     .style("stroke", "black")
+    .style("pointer-events", "none") //disables mouse events on text
+    .attr("dy", ".35em") //centers text in node
     .text(d => getTitle(d));
 
   node.append("title")
