@@ -11,7 +11,7 @@ function color() {
 function loadData() {
   d3.json("data.json")
     .then(data => createGraph(data))
-    .catch(error => console.log("Error in graph:", error));
+    .catch(error => console.log("Error in graph: ", error));
 }
 
 function getTitle(d) {
@@ -45,10 +45,10 @@ function createGraph(data) {
   const link = svg.append("g")
     .attr("stroke", "#999")
     .attr("stroke-opacity", 0.6)
-    .attr("class", "link")
     .selectAll("g")
     .data(links)
-    .join("g");
+    .join("g")
+    .attr("class", "link");
 
     link.append("line")
       .attr("stroke-width", d => Math.sqrt(d.value));
@@ -58,10 +58,10 @@ function createGraph(data) {
   const node = svg.append("g")
     .attr("stroke", "#fff")
     .attr("stroke-width", 1.5)
-    .attr("class", "node")
     .selectAll("g")
     .data(nodes)
     .join("g")
+    .attr("class", "node")
     .on("click", d => { populateLegend(d); d3.event.stopPropagation(); })
     .call(drag(simulation));
 
@@ -176,7 +176,6 @@ function populateLegend(d) {
           .filter(d => d.type === proto.type)
           .text(d => d.properties[e.prop]));
   }
-
 }
 
 function clearLegend() {
