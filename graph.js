@@ -1,5 +1,5 @@
-const width = 400;
-const height = 400;
+let width = 0;
+let height = 0;
 const nodeRadius = 10;
 let scale = 1;
 
@@ -19,7 +19,15 @@ function getTitle(d) {
   return proto.properties.title;
 }
 
+function updateSvgSize() {
+  const bounds = d3.select("#svg-container").node().getBoundingClientRect();
+  width = bounds.width;
+  height = bounds.height;
+}
+
 function createGraph(data) {
+  updateSvgSize();
+
   const links = data.links.map(d => Object.create(d));
   const nodes = data.nodes.map(d => Object.create(d));
 
@@ -89,6 +97,8 @@ function createGraph(data) {
   });
 
   d3.select("#btn").on("click", d => moveCenter(nodes));
+
+  window.addEventListener("resize", () => updateSvgSize());
 }
 
 function moveCenter(nodes) {
@@ -107,12 +117,12 @@ function moveCenter(nodes) {
 
   const graphW = minX - maxX;
   const graphH = minY - maxY;
-  scale = 2.3;
+  scale = 2;
 
   const transX = (bounds.width / 2) - (graphW / 2) - maxX;
   const transY = (bounds.height / 2) - (graphH / 2) - maxY; 
 
-  d3.selectAll(".node, .link").transition().duration(2000).attr("transform", /*"translate(" + transX + ", " + transY + ")*/"scale("+ scale + ")");
+  d3.selectAll(".node, .link").transition().duration(2000).attr("transform", "translate(" + transX + ", " + transY + ")scale("+ scale + ")");
 }
 
 function drag(simulation) {
@@ -146,11 +156,11 @@ function populateLegend(d) {
   clearLegend();
   d3.select("#legend-container").style("visibility", "visible");
 
-  d3.select("#legend").append("h3").text("Type: " + proto.type);
+  d3.select("#legend").append("h3").text("Node Type: " + proto.type);
 
   for(let prop in proto.properties) {
-    const propDiv = d3.select("#legend").append("div")
-      .selectAll("div")
+    const propDiv = d3.select("#legend")
+      .append("div")
       .data([{prop: prop}])
       .join("div")
     
