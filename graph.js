@@ -27,6 +27,7 @@ function updateSvgSize() {
 
 function createGraph(data) {
   updateSvgSize();
+  initLegend();
 
   const links = data.links.map(d => Object.create(d));
   const nodes = data.nodes.map(d => Object.create(d));
@@ -40,7 +41,7 @@ function createGraph(data) {
 
   const svg = d3.select("svg");
 
-  svg.on("click", d => hideLegend());
+  svg.on("click", d => moveLegend(1000, "-20%"));
 
   const link = svg.append("g")
     .attr("stroke", "#999")
@@ -53,7 +54,9 @@ function createGraph(data) {
     link.append("line")
       .attr("stroke-width", d => Math.sqrt(d.value));
 
-    link.append("text").text("testing");
+    link.append("text")
+      .text("testing")
+      .attr("stroke", "#666");
 
   const node = svg.append("g")
     .attr("stroke", "#fff")
@@ -71,6 +74,7 @@ function createGraph(data) {
 
   node.append("text")
     .style("stroke", "black")
+    .attr("stroke-width", .8)
     .style("pointer-events", "none") //disables mouse events on text
     .attr("dy", ".35em") //centers text in node
     .text(d => getTitle(d));
@@ -156,7 +160,7 @@ function populateLegend(d) {
   const proto = Object.getPrototypeOf(d);
   
   clearLegend();
-  d3.select("#legend-container").style("visibility", "visible");
+  moveLegend(1000, "0%");
 
   d3.select("#legend").append("h3").text("Node Type: " + proto.type);
 
@@ -178,12 +182,19 @@ function populateLegend(d) {
   }
 }
 
+//stops a dodgey animation when left: -20% is set in css directly.
+function initLegend() {
+  d3.select("#legend-container")
+    .style("left", "-20%")
+    .style("visibility", "visible");
+}
+
 function clearLegend() {
   d3.select("#legend").selectAll("*").remove();
 }
 
-function hideLegend() {
-  d3.select("#legend-container").style("visibility", "hidden");
+function moveLegend(speed, xPos) {
+  d3.select("#legend-container").transition().duration(speed).style("left", xPos);
 }
 
 loadData();

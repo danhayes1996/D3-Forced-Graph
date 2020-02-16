@@ -1,6 +1,7 @@
 html, body {
     height: 100%;
     margin: 0 10px;
+    font-family: 'Open Sans', sans-serif;
 }
 
 #svg-container {
@@ -8,7 +9,7 @@ html, body {
     height: 90%;
     margin: 10px auto 0 auto;
 
-    border: 1px solid #999;
+    border: 1px solid #1E2027;
     border-radius: 3px;
 }
 
@@ -29,16 +30,21 @@ svg {
 
 #legend-container {
     position: fixed;
-    top:0;
-    left:0;
+    top: 0;
+    left: 0;
     width: 15%;
     height: 100%; 
-    background: #BBB;
+
+    background: #1E2027;
+    color: white;
+    box-shadow: 2px 0px 5px 0 #555;
+
+    /* only used for initalizing legend */
     visibility: hidden;
 }
 
 #legend-container h2 {
- margin: 10px;
+    margin: 10px;
 }
 
 #legend {
