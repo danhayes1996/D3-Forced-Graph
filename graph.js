@@ -32,6 +32,8 @@ function createGraph(data) {
 
   const svg = d3.select("svg");
 
+  svg.on("click", d => hideLegend());
+
   const link = svg.append("g")
     .attr("stroke", "#999")
     .attr("stroke-opacity", 0.6)
@@ -52,7 +54,7 @@ function createGraph(data) {
     .selectAll("g")
     .data(nodes)
     .join("g")
-    .on("click", d => populateLegend(d));
+    .on("click", d => {populateLegend(d); d3.event.stopPropagation(); });
 
   node.append("circle")
       .attr("r", nodeRadius)
@@ -140,7 +142,11 @@ function drag(simulation) {
 
 function populateLegend(d) {
   const proto = Object.getPrototypeOf(d);
+  
   clearLegend();
+  d3.select("#legend-container").style("display", "block");
+
+  d3.select("#legend").append("h3").text("Type: " + proto.type);
 
   for(let prop in proto.properties) {
     const propDiv = d3.select("#legend").append("div")
@@ -163,6 +169,10 @@ function populateLegend(d) {
 
 function clearLegend() {
   d3.select("#legend").selectAll("*").remove();
+}
+
+function hideLegend() {
+  d3.select("#legend-container").style("display", "none");
 }
 
 loadData();
