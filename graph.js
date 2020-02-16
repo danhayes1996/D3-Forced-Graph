@@ -144,7 +144,7 @@ function populateLegend(d) {
   const proto = Object.getPrototypeOf(d);
   
   clearLegend();
-  d3.select("#legend-container").style("display", "block");
+  d3.select("#legend-container").style("visibility", "visible");
 
   d3.select("#legend").append("h3").text("Type: " + proto.type);
 
@@ -172,7 +172,7 @@ function clearLegend() {
 }
 
 function hideLegend() {
-  d3.select("#legend-container").style("display", "none");
+  d3.select("#legend-container").style("visibility", "hidden");
 }
 
 loadData();
