@@ -1,18 +1,33 @@
-<!-- IE supported versions (9, 10, 11) -->
-<!-- Chrome & Firefox Support -->
+<!-- IE version 9+ -->
+<!-- Chrome & Firefox -->
 <!DOCTYPE html>
 <html class="no-js">
     <head>
         <meta charset="utf-8">
         <title></title>
         <link rel="stylesheet" type="text/css" href="graph.css">
+        <!--[if lt IE 9]>
+            <style>
+                #legend, 
+                #svg-container, 
+                #btn {
+                    display: none;
+                }
+            </style>
+        <![endif]-->
     </head>
     <body>
+        <!--[if lt IE 9]>
+            <h1>Please upgrade your browser!</h1>
+            <p>This webpage only supports Internet Exporer versions 9 and above.</p>
+        <![endif]-->
+
         <button id="btn">Center</button>
         <div id="legend"></div>
         <div id="svg-container">
             <svg></svg>
         </div>
+        
         <!-- Convert js to older versions -->
         <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script> 
         <!-- Adds iterators (For IE Compatibility) -->
