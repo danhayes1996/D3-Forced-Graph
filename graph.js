@@ -44,6 +44,7 @@ function createGraph(data) {
   svg.on("click", d => moveLegend(1000, "-20%"));
 
   const link = svg.append("g")
+    .attr("class", "links")
     .attr("stroke", "#999")
     .attr("stroke-opacity", 0.6)
     .selectAll("g")
@@ -59,6 +60,7 @@ function createGraph(data) {
       .attr("stroke", "#666");
 
   const node = svg.append("g")
+    .attr("class", "nodes")
     .attr("stroke", "#fff")
     .attr("stroke-width", 1.5)
     .selectAll("g")
@@ -157,6 +159,7 @@ function drag(simulation) {
 }
 
 function populateLegend(d) {
+  const selectedNodeText = d3.selectAll(".nodes g > text").filter(x => x.index == d.index).text();
   const proto = Object.getPrototypeOf(d);
   
   clearLegend();
@@ -170,7 +173,7 @@ function populateLegend(d) {
       .data([{prop: prop}])
       .join("div");
 
-    propDiv.append("input", prop)
+    const radioBtn = propDiv.append("input", prop)
       .attr("id", "rb" + prop)
       .attr("type", "radio")
       .attr("name", "property")
@@ -178,6 +181,10 @@ function populateLegend(d) {
         d3.selectAll(".node text")
           .filter(d => d.type === proto.type)
           .text(d => d.properties[e.prop]));
+
+    if(proto.properties[prop] === selectedNodeText) {
+      radioBtn.attr("checked", true);
+    }
 
     propDiv.append("label")
       .attr("for", "rb" + prop)
